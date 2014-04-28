@@ -1,0 +1,9 @@
+.root{
+    -fx-font-size: 13pt;
+    -fx-font-family: "Courier New";
+    display: block;
+}
+Rectangle{
+    -fx-stroke-width: 3;
+    -fx-stroke-type: outside;
+}

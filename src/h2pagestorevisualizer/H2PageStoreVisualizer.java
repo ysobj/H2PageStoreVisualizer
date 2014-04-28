@@ -58,6 +58,7 @@ public class H2PageStoreVisualizer extends Application {
             }
         }
         Scene scene = new Scene(root, 800, 600, Color.BLACK);
+        scene.getStylesheets().add(getClass().getResource("H2PageStoreVisualizer.css").toExternalForm());
         primaryStage.setTitle("Hello World!? " + pageSize + " * " + pages);
         primaryStage.setScene(scene);
         primaryStage.show();
@@ -102,10 +103,8 @@ public class H2PageStoreVisualizer extends Application {
     }
 
     protected Rectangle createPage(Group root, Color strokeColor) {
-        Rectangle rect = new Rectangle(30, 30, Color.web("white", 0.05));
-        rect.setStrokeType(StrokeType.OUTSIDE);
+        Rectangle rect = new Rectangle(30, 30);
         rect.setStroke(strokeColor);
-        rect.setStrokeWidth(3);
 
         rect.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent event) -> {
             ParallelTransition transition = new ParallelTransition();
