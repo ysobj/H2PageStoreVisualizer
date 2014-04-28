@@ -17,6 +17,7 @@ import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -36,7 +37,8 @@ public class H2PageStoreVisualizer extends Application {
     @Override
     public void start(Stage primaryStage) {
         byte[] datafile = getDatafile("/sample.h2.db");
-        int pages = (int) datafile.length / 2048;
+        int pageSize = readInt(datafile, 48);
+        int pages = (int) datafile.length / pageSize;
         int cnt = 0;
         Group root = new Group();
         for (int i = 0; i < 15; i++) {
@@ -45,9 +47,9 @@ public class H2PageStoreVisualizer extends Application {
                     cnt++;
                     Rectangle rect = null;
                     if (cnt >= 1 && cnt <= 5) {
-                        rect = createRect(root, staticPages);
+                        rect = createStaticPage(root);
                     } else {
-                        rect = createRect(root, otherPages);
+                        rect = createOtherPage(root);
                     }
                     rect.setX(10 + j * 40);
                     rect.setY(10 + i * 40);
@@ -56,9 +58,18 @@ public class H2PageStoreVisualizer extends Application {
             }
         }
         Scene scene = new Scene(root, 800, 600, Color.BLACK);
-        primaryStage.setTitle("Hello World!?" + pages);
+        primaryStage.setTitle("Hello World!? " + pageSize + " * " + pages);
         primaryStage.setScene(scene);
         primaryStage.show();
+    }
+
+    public int readInt(byte[] buff, int pos) {
+        //org.h2.store.Data#readInt()
+        int x = (buff[pos] << 24)
+                + ((buff[pos + 1] & 0xff) << 16)
+                + ((buff[pos + 2] & 0xff) << 8)
+                + (buff[pos + 3] & 0xff);
+        return x;
     }
 
     protected byte[] getDatafile(String filePath) {
@@ -76,7 +87,21 @@ public class H2PageStoreVisualizer extends Application {
         return null;
     }
 
-    protected Rectangle createRect(Group root, Color strokeColor) {
+    protected Rectangle createStaticPage(Group root) {
+        Rectangle rect = createPage(root, staticPages);
+        Tooltip t = new Tooltip("Static Page");
+        Tooltip.install(rect, t);
+        return rect;
+    }
+
+    protected Rectangle createOtherPage(Group root) {
+        Rectangle rect = createPage(root, otherPages);
+        Tooltip t = new Tooltip("Other Page");
+        Tooltip.install(rect, t);
+        return rect;
+    }
+
+    protected Rectangle createPage(Group root, Color strokeColor) {
         Rectangle rect = new Rectangle(30, 30, Color.web("white", 0.05));
         rect.setStrokeType(StrokeType.OUTSIDE);
         rect.setStroke(strokeColor);
