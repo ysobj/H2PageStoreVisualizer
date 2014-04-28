@@ -7,3 +7,9 @@ Rectangle{
     -fx-stroke-width: 3;
     -fx-stroke-type: outside;
 }
+.static-page{
+    -fx-stroke: red;
+}
+.other-page{
+    -fx-stroke: lime;
+}

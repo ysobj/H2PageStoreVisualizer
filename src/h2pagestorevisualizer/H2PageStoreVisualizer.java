@@ -21,7 +21,6 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.StrokeType;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -31,9 +30,6 @@ import javafx.util.Duration;
  */
 public class H2PageStoreVisualizer extends Application {
 
-    protected static Color staticPages = Color.web("red", 0.2);
-    protected static Color otherPages = Color.web("white", 0.2);
-
     @Override
     public void start(Stage primaryStage) {
         byte[] datafile = getDatafile("/sample.h2.db");
@@ -42,14 +38,29 @@ public class H2PageStoreVisualizer extends Application {
         int cnt = 0;
         Group root = new Group();
         for (int i = 0; i < 15; i++) {
-            for (int j = 0; j < 15; j++) {
+            for (int j = 0; j < 10; j++) {
                 if (cnt < pages) {
                     cnt++;
                     Rectangle rect = null;
-                    if (cnt >= 1 && cnt <= 5) {
-                        rect = createStaticPage(root);
-                    } else {
-                        rect = createOtherPage(root);
+                    switch (cnt) {
+                        case 1:
+                            rect = createStaticPage(root, "contains a static file header");
+                            break;
+                        case 2:
+                            rect = createStaticPage(root, "contain the variable file header");
+                            break;
+                        case 3:
+                            rect = createStaticPage(root, "contain the variable file header(copy)");
+                            break;
+                        case 4:
+                            rect = createStaticPage(root, "contains the first free list page");
+                            break;
+                        case 5:
+                            rect = createStaticPage(root, "contains the meta table root page");
+                            break;
+                        default:
+                            rect = createOtherPage(root);
+
                     }
                     rect.setX(10 + j * 40);
                     rect.setY(10 + i * 40);
@@ -88,23 +99,24 @@ public class H2PageStoreVisualizer extends Application {
         return null;
     }
 
-    protected Rectangle createStaticPage(Group root) {
-        Rectangle rect = createPage(root, staticPages);
-        Tooltip t = new Tooltip("Static Page");
+    protected Rectangle createStaticPage(Group root, String desc) {
+        Rectangle rect = createPage(root);
+        rect.getStyleClass().add("static-page");
+        Tooltip t = new Tooltip(desc);
         Tooltip.install(rect, t);
         return rect;
     }
 
     protected Rectangle createOtherPage(Group root) {
-        Rectangle rect = createPage(root, otherPages);
+        Rectangle rect = createPage(root);
         Tooltip t = new Tooltip("Other Page");
+        rect.getStyleClass().add("other-page");
         Tooltip.install(rect, t);
         return rect;
     }
 
-    protected Rectangle createPage(Group root, Color strokeColor) {
+    protected Rectangle createPage(Group root) {
         Rectangle rect = new Rectangle(30, 30);
-        rect.setStroke(strokeColor);
 
         rect.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent event) -> {
             ParallelTransition transition = new ParallelTransition();
