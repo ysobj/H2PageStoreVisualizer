@@ -8,6 +8,8 @@ package h2pagestorevisualizer;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.animation.FadeTransition;
@@ -30,6 +32,20 @@ import javafx.util.Duration;
  */
 public class H2PageStoreVisualizer extends Application {
 
+    protected static final Map<Integer, String> typeMap = new HashMap<>();
+
+    static {
+        typeMap.put(0, "TYPE_EMPTY");//An empty page.
+        typeMap.put(1, "TYPE_DATA_LEAF");//A data leaf page (without overflow: + FLAG_LAST).
+        typeMap.put(2, "TYPE_DATA_NODE");//A data node page (never has overflow pages).
+        typeMap.put(3, "TYPE_DATA_OVERFLOW"); //A data overflow page (the last page: + FLAG_LAST).
+        typeMap.put(4, "TYPE_BTREE_LEAF"); //A b-tree leaf page (without overflow: + FLAG_LAST).
+        typeMap.put(5, "TYPE_BTREE_NODE"); //A b-tree node page (never has overflow pages).
+        typeMap.put(6, "TYPE_FREE_LIST"); //A page containing a list of free pages (the last page: + FLAG_LAST).
+        typeMap.put(7, "TYPE_STREAM_TRUNK"); //A stream trunk page.
+        typeMap.put(8, "TYPE_STREAM_DATA"); //A stream data page.
+    }
+
     @Override
     public void start(Stage primaryStage) {
         byte[] datafile = getDatafile("/sample.h2.db");
@@ -40,31 +56,31 @@ public class H2PageStoreVisualizer extends Application {
         for (int i = 0; i < 15; i++) {
             for (int j = 0; j < 10; j++) {
                 if (cnt < pages) {
-                    cnt++;
                     Rectangle rect = null;
                     switch (cnt) {
-                        case 1:
+                        case 0:
                             rect = createStaticPage(root, "contains a static file header");
                             break;
-                        case 2:
+                        case 1:
                             rect = createStaticPage(root, "contain the variable file header");
                             break;
-                        case 3:
+                        case 2:
                             rect = createStaticPage(root, "contain the variable file header(copy)");
                             break;
-                        case 4:
+                        case 3:
                             rect = createStaticPage(root, "contains the first free list page");
                             break;
-                        case 5:
+                        case 4:
                             rect = createStaticPage(root, "contains the meta table root page");
                             break;
                         default:
-                            rect = createOtherPage(root);
+                            rect = createOtherPage(root, 0);
 
                     }
                     rect.setX(10 + j * 40);
                     rect.setY(10 + i * 40);
                     root.getChildren().add(rect);
+                    cnt++;
                 }
             }
         }
@@ -107,7 +123,7 @@ public class H2PageStoreVisualizer extends Application {
         return rect;
     }
 
-    protected Rectangle createOtherPage(Group root) {
+    protected Rectangle createOtherPage(Group root, int type) {
         Rectangle rect = createPage(root);
         Tooltip t = new Tooltip("Other Page");
         rect.getStyleClass().add("other-page");
