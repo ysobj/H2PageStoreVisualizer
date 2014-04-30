@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package h2pagestorevisualizer.page;
 
 import java.util.HashMap;
@@ -14,9 +13,12 @@ import java.util.Map;
  * @author ysobj
  */
 public class H2Page {
-    private final byte[] rawdata;
-    private final int pageType;
-    
+
+    protected final byte[] rawdata;
+    protected final int pageType;
+    protected int parentPageId;
+    protected int entryCount;
+
     protected static final Map<Integer, String> typeMap = new HashMap<>();
 
     static {
@@ -31,12 +33,20 @@ public class H2Page {
         typeMap.put(8, "TYPE_STREAM_DATA"); //A stream data page.
     }
 
-    public H2Page(byte[] data){
+    public H2Page(byte[] data) {
         this.rawdata = data;
-        this.pageType = data[0] & ~16; 
+        this.pageType = data[0] & ~16;
     }
-    
-    public String getPageTypeDesc(){
+
+    public byte[] getRawData() {
+        return this.rawdata;
+    }
+
+    public int getPageType() {
+        return this.pageType;
+    }
+
+    public String getPageTypeDesc() {
         return typeMap.get(pageType);
     }
 }

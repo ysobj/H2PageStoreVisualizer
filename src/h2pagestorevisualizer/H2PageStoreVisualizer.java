@@ -120,7 +120,12 @@ public class H2PageStoreVisualizer extends Application {
 
     protected Rectangle createOtherPage(Group root, String styleClass, H2Page h2page) {
         Rectangle rect = createPage(root);
-        Tooltip t = new Tooltip(h2page.getPageTypeDesc());
+        String desc = h2page.getPageTypeDesc();
+        if(h2page.getPageType() == 1){
+            desc += String.format(" tableId=%d", readInt(h2page.getRawData(), 7));
+            System.out.println(desc);
+        }
+        Tooltip t = new Tooltip(desc);
         rect.getStyleClass().add(styleClass);
         Tooltip.install(rect, t);
         return rect;
