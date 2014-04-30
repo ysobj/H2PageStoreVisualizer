@@ -8,6 +8,7 @@ package h2pagestorevisualizer;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -26,25 +27,13 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import h2pagestorevisualizer.page.H2Page;
+
 /**
  *
  * @author ysobj
  */
 public class H2PageStoreVisualizer extends Application {
-
-    protected static final Map<Integer, String> typeMap = new HashMap<>();
-
-    static {
-        typeMap.put(0, "TYPE_EMPTY");//An empty page.
-        typeMap.put(1, "TYPE_DATA_LEAF");//A data leaf page (without overflow: + FLAG_LAST).
-        typeMap.put(2, "TYPE_DATA_NODE");//A data node page (never has overflow pages).
-        typeMap.put(3, "TYPE_DATA_OVERFLOW"); //A data overflow page (the last page: + FLAG_LAST).
-        typeMap.put(4, "TYPE_BTREE_LEAF"); //A b-tree leaf page (without overflow: + FLAG_LAST).
-        typeMap.put(5, "TYPE_BTREE_NODE"); //A b-tree node page (never has overflow pages).
-        typeMap.put(6, "TYPE_FREE_LIST"); //A page containing a list of free pages (the last page: + FLAG_LAST).
-        typeMap.put(7, "TYPE_STREAM_TRUNK"); //A stream trunk page.
-        typeMap.put(8, "TYPE_STREAM_DATA"); //A stream data page.
-    }
 
     @Override
     public void start(Stage primaryStage) {
@@ -67,14 +56,20 @@ public class H2PageStoreVisualizer extends Application {
                         case 2:
                             rect = createStaticPage(root, "contain the variable file header(copy)");
                             break;
-                        case 3:
-                            rect = createStaticPage(root, "contains the first free list page");
-                            break;
-                        case 4:
-                            rect = createStaticPage(root, "contains the meta table root page");
-                            break;
+//                        case 3:
+//                            rect = createStaticPage(root, "contains the first free list page");
+//                            break;
+//                        case 4:
+//                            rect = createStaticPage(root, "contains the meta table root page");
+//                            break;
                         default:
-                            rect = createOtherPage(root, 0);
+                            String styleClass = "other-page";
+                            if(cnt == 3 || cnt ==4){
+                                styleClass = "static-page";
+                            }
+                            byte[] page = Arrays.copyOfRange(datafile, pageSize * cnt, pageSize * (cnt + 1));
+                            H2Page h2page = new H2Page(page);
+                            rect = createOtherPage(root,styleClass, h2page);
 
                     }
                     rect.setX(10 + j * 40);
@@ -123,10 +118,10 @@ public class H2PageStoreVisualizer extends Application {
         return rect;
     }
 
-    protected Rectangle createOtherPage(Group root, int type) {
+    protected Rectangle createOtherPage(Group root, String styleClass, H2Page h2page) {
         Rectangle rect = createPage(root);
-        Tooltip t = new Tooltip("Other Page");
-        rect.getStyleClass().add("other-page");
+        Tooltip t = new Tooltip(h2page.getPageTypeDesc());
+        rect.getStyleClass().add(styleClass);
         Tooltip.install(rect, t);
         return rect;
     }
