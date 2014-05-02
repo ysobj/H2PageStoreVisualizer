@@ -14,6 +14,7 @@ import java.util.Map;
  */
 public class H2Page {
 
+    protected final H2Data h2data;
     protected final byte[] rawdata;
     protected final int pageType;
     protected int parentPageId;
@@ -35,7 +36,8 @@ public class H2Page {
 
     public H2Page(byte[] data) {
         this.rawdata = data;
-        this.pageType = data[0] & ~16;
+        this.h2data = new H2Data(data);
+        this.pageType = h2data.readByte() & ~16;
     }
 
     public byte[] getRawData() {
