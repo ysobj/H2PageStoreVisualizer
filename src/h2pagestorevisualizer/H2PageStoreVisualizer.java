@@ -28,6 +28,7 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import h2pagestorevisualizer.page.H2Page;
+import h2pagestorevisualizer.page.H2PageDataLeaf;
 
 /**
  *
@@ -37,7 +38,7 @@ public class H2PageStoreVisualizer extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        byte[] datafile = getDatafile("/sample.h2.db");
+        byte[] datafile = getDatafile("/sample2.h2.db");
         int pageSize = readInt(datafile, 48);
         int pages = (int) datafile.length / pageSize;
         int cnt = 0;
@@ -64,12 +65,17 @@ public class H2PageStoreVisualizer extends Application {
 //                            break;
                         default:
                             String styleClass = "other-page";
-                            if(cnt == 3 || cnt ==4){
+                            if (cnt == 3 || cnt == 4) {
                                 styleClass = "static-page";
                             }
                             byte[] page = Arrays.copyOfRange(datafile, pageSize * cnt, pageSize * (cnt + 1));
-                            H2Page h2page = new H2Page(page);
-                            rect = createOtherPage(root,styleClass, h2page);
+                            H2Page h2page = null;
+                            if ((page[0] & ~16) == 1) {
+                                h2page = new H2PageDataLeaf(page);
+                            } else {
+                                h2page = new H2Page(page);
+                            }
+                            rect = createOtherPage(root, styleClass, h2page);
 
                     }
                     rect.setX(10 + j * 40);
@@ -121,8 +127,8 @@ public class H2PageStoreVisualizer extends Application {
     protected Rectangle createOtherPage(Group root, String styleClass, H2Page h2page) {
         Rectangle rect = createPage(root);
         String desc = h2page.getPageTypeDesc();
-        if(h2page.getPageType() == 1){
-            desc += String.format(" tableId=%d", readInt(h2page.getRawData(), 7));
+        if (h2page.getPageType() == 1) {
+            desc += String.format(" tableId=%d", ((H2PageDataLeaf)h2page).getTableId());
             System.out.println(desc);
         }
         Tooltip t = new Tooltip(desc);
