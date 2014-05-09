@@ -28,6 +28,7 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import h2pagestorevisualizer.page.H2Page;
+import h2pagestorevisualizer.page.H2PageBtreeLeaf;
 import h2pagestorevisualizer.page.H2PageDataLeaf;
 
 /**
@@ -38,7 +39,7 @@ public class H2PageStoreVisualizer extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        byte[] datafile = getDatafile("/sample2.h2.db");
+        byte[] datafile = getDatafile("/sample.h2.db");
         int pageSize = readInt(datafile, 48);
         int pages = (int) datafile.length / pageSize;
         int cnt = 0;
@@ -72,6 +73,8 @@ public class H2PageStoreVisualizer extends Application {
                             H2Page h2page = null;
                             if ((page[0] & ~16) == 1) {
                                 h2page = new H2PageDataLeaf(page);
+                            } else if ((page[0] & ~16) == 4) {
+                                h2page = new H2PageBtreeLeaf(page);
                             } else {
                                 h2page = new H2Page(page);
                             }
@@ -129,6 +132,10 @@ public class H2PageStoreVisualizer extends Application {
         String desc = h2page.getPageTypeDesc();
         if (h2page.getPageType() == 1) {
             desc += String.format(" tableId=%d", ((H2PageDataLeaf)h2page).getTableId());
+            System.out.println(desc);
+        }
+        if (h2page.getPageType() == 4) {
+            desc += String.format(" indexId=%d", ((H2PageBtreeLeaf)h2page).getIndexId());
             System.out.println(desc);
         }
         Tooltip t = new Tooltip(desc);

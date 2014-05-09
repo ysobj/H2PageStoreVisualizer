@@ -12,23 +12,17 @@ import java.util.Map;
  *
  * @author ysobj
  */
-public class H2PageDataLeaf extends H2Page {
-    protected int columnCount;
+public class H2PageBtreeLeaf extends H2Page {
     protected int indexId;
-    public H2PageDataLeaf(byte[] data) {
+    public H2PageBtreeLeaf(byte[] data) {
         super(data);
         this.h2data.readShortInt();
         this.parentPageId = this.h2data.readInt();
         this.indexId = this.h2data.readVarInt();
-        this.columnCount = this.h2data.readVarInt();
         this.entryCount = this.h2data.readShortInt();
     }
 
-    public int getColumnCount() {
-        return columnCount;
-    }
-
-    public int getTableId() {
+    public int getIndexId() {
         return indexId;
     }
 
