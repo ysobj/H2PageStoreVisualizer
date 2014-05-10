@@ -9,7 +9,25 @@ Rectangle{
 }
 .static-page{
     -fx-stroke: red;
+    -fx-fill: black;
+}
+/*.static-page:hover{
+    -fx-stroke: blue;
+    -fx-fill: white;
+}*/
+.static-page-selected{
+    -fx-stroke: purple;
+    -fx-fill: red;
 }
 .other-page{
     -fx-stroke: lime;
+    -fx-fill: black;
+}
+/*.other-page:hover{
+    -fx-stroke: wheat;
+    -fx-fill: white;
+}*/
+.other-page-selected{
+    -fx-stroke: fuchsia;
+    -fx-fill: magenta;
 }

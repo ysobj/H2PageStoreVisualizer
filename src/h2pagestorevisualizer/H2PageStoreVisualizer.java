@@ -147,6 +147,16 @@ public class H2PageStoreVisualizer extends Application {
     protected Rectangle createPage(Group root) {
         Rectangle rect = new Rectangle(30, 30);
 
+        rect.addEventHandler(MouseEvent.MOUSE_ENTERED, (MouseEvent event) -> {
+            System.out.println("MOUSE_ENTERED");
+            rect.getStyleClass().remove("other-page");
+            rect.getStyleClass().add("other-page-selected");
+        });
+        rect.addEventHandler(MouseEvent.MOUSE_EXITED, (MouseEvent event) -> {
+            System.out.println("MOUSE_EXITED");
+            rect.getStyleClass().remove("other-page-selected");
+            rect.getStyleClass().add("other-page");
+        });
         rect.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent event) -> {
             ParallelTransition transition = new ParallelTransition();
             FadeTransition fadeTransition
