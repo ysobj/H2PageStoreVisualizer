@@ -30,6 +30,7 @@ import javafx.util.Duration;
 import h2pagestorevisualizer.page.H2Page;
 import h2pagestorevisualizer.page.H2PageBtreeLeaf;
 import h2pagestorevisualizer.page.H2PageDataLeaf;
+import javafx.scene.control.Button;
 
 /**
  *
@@ -47,40 +48,7 @@ public class H2PageStoreVisualizer extends Application {
         for (int i = 0; i < 15; i++) {
             for (int j = 0; j < 10; j++) {
                 if (cnt < pages) {
-                    Rectangle rect = null;
-                    switch (cnt) {
-                        case 0:
-                            rect = createStaticPage(root, "contains a static file header");
-                            break;
-                        case 1:
-                            rect = createStaticPage(root, "contain the variable file header");
-                            break;
-                        case 2:
-                            rect = createStaticPage(root, "contain the variable file header(copy)");
-                            break;
-//                        case 3:
-//                            rect = createStaticPage(root, "contains the first free list page");
-//                            break;
-//                        case 4:
-//                            rect = createStaticPage(root, "contains the meta table root page");
-//                            break;
-                        default:
-                            String styleClass = "other-page";
-                            if (cnt == 3 || cnt == 4) {
-                                styleClass = "static-page";
-                            }
-                            byte[] page = Arrays.copyOfRange(datafile, pageSize * cnt, pageSize * (cnt + 1));
-                            H2Page h2page = null;
-                            if ((page[0] & ~16) == 1) {
-                                h2page = new H2PageDataLeaf(page);
-                            } else if ((page[0] & ~16) == 4) {
-                                h2page = new H2PageBtreeLeaf(page);
-                            } else {
-                                h2page = new H2Page(page);
-                            }
-                            rect = createOtherPage(root, styleClass, h2page);
-
-                    }
+                    Rectangle rect = createRectangle(cnt, root, datafile, pageSize);
                     rect.setX(10 + j * 40);
                     rect.setY(10 + i * 40);
                     root.getChildren().add(rect);
@@ -94,7 +62,7 @@ public class H2PageStoreVisualizer extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
     }
-
+    
     public int readInt(byte[] buff, int pos) {
         //org.h2.store.Data#readInt()
         int x = (buff[pos] << 24)
@@ -117,6 +85,44 @@ public class H2PageStoreVisualizer extends Application {
             Logger.getLogger(H2PageStoreVisualizer.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
+    }
+
+    private Rectangle createRectangle(int cnt, Group root, byte[] datafile, int pageSize) {
+        Rectangle rect;
+        switch (cnt) {
+            case 0:
+                rect = createStaticPage(root, "contains a static file header");
+                break;
+            case 1:
+                rect = createStaticPage(root, "contain the variable file header");
+                break;
+            case 2:
+                rect = createStaticPage(root, "contain the variable file header(copy)");
+                break;
+//                        case 3:
+//                            rect = createStaticPage(root, "contains the first free list page");
+//                            break;
+//                        case 4:
+//                            rect = createStaticPage(root, "contains the meta table root page");
+//                            break;
+            default:
+                String styleClass = "other-page";
+                if (cnt == 3 || cnt == 4) {
+                    styleClass = "static-page";
+                }
+                byte[] page = Arrays.copyOfRange(datafile, pageSize * cnt, pageSize * (cnt + 1));
+                H2Page h2page = null;
+                if ((page[0] & ~16) == 1) {
+                    h2page = new H2PageDataLeaf(page);
+                } else if ((page[0] & ~16) == 4) {
+                    h2page = new H2PageBtreeLeaf(page);
+                } else {
+                    h2page = new H2Page(page);
+                }
+                rect = createOtherPage(root, styleClass, h2page);
+                
+        }
+        return rect;
     }
 
     protected Rectangle createStaticPage(Group root, String desc) {
@@ -146,7 +152,6 @@ public class H2PageStoreVisualizer extends Application {
 
     protected Rectangle createPage(Group root) {
         Rectangle rect = new Rectangle(30, 30);
-
         rect.addEventHandler(MouseEvent.MOUSE_ENTERED, (MouseEvent event) -> {
             System.out.println("MOUSE_ENTERED");
             rect.getStyleClass().remove("other-page");
