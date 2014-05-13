@@ -51,4 +51,5 @@ public class H2Page {
     public String getPageTypeDesc() {
         return typeMap.get(pageType);
     }
+
 }

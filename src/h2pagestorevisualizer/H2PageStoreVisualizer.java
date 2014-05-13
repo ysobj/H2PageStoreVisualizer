@@ -9,8 +9,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.animation.FadeTransition;
@@ -28,9 +26,7 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import h2pagestorevisualizer.page.H2Page;
-import h2pagestorevisualizer.page.H2PageBtreeLeaf;
-import h2pagestorevisualizer.page.H2PageDataLeaf;
-import javafx.scene.control.Button;
+import h2pagestorevisualizer.page.H2PageFactory;
 
 /**
  *
@@ -111,14 +107,7 @@ public class H2PageStoreVisualizer extends Application {
                     styleClass = "static-page";
                 }
                 byte[] page = Arrays.copyOfRange(datafile, pageSize * cnt, pageSize * (cnt + 1));
-                H2Page h2page = null;
-                if ((page[0] & ~16) == 1) {
-                    h2page = new H2PageDataLeaf(page);
-                } else if ((page[0] & ~16) == 4) {
-                    h2page = new H2PageBtreeLeaf(page);
-                } else {
-                    h2page = new H2Page(page);
-                }
+                H2Page h2page = H2PageFactory.create(page);
                 rect = createOtherPage(root, styleClass, h2page);
                 
         }
@@ -136,14 +125,6 @@ public class H2PageStoreVisualizer extends Application {
     protected Rectangle createOtherPage(Group root, String styleClass, H2Page h2page) {
         Rectangle rect = createPage(root);
         String desc = h2page.getPageTypeDesc();
-        if (h2page.getPageType() == 1) {
-            desc += String.format(" tableId=%d", ((H2PageDataLeaf)h2page).getTableId());
-            System.out.println(desc);
-        }
-        if (h2page.getPageType() == 4) {
-            desc += String.format(" indexId=%d", ((H2PageBtreeLeaf)h2page).getIndexId());
-            System.out.println(desc);
-        }
         Tooltip t = new Tooltip(desc);
         rect.getStyleClass().add(styleClass);
         Tooltip.install(rect, t);

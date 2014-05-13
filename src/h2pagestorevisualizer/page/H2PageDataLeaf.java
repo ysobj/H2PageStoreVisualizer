@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package h2pagestorevisualizer.page;
 
 import java.util.Map;
@@ -13,8 +12,10 @@ import java.util.Map;
  * @author ysobj
  */
 public class H2PageDataLeaf extends H2Page {
+
     protected int columnCount;
     protected int indexId;
+
     public H2PageDataLeaf(byte[] data) {
         super(data);
         this.h2data.readShortInt();
@@ -47,5 +48,9 @@ public class H2PageDataLeaf extends H2Page {
     public int getEntryCount() {
         return entryCount;
     }
-    
+
+    @Override
+    public String getPageTypeDesc() {
+        return super.getPageTypeDesc() + String.format(" tableId=%d", this.getTableId());
+    }
 }

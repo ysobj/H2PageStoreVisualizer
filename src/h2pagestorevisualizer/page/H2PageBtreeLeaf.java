@@ -42,4 +42,9 @@ public class H2PageBtreeLeaf extends H2Page {
         return entryCount;
     }
     
+    
+    @Override
+    public String getPageTypeDesc() {
+        return super.getPageTypeDesc() +  String.format(" indexId=%d", this.getIndexId());
+    }
 }
