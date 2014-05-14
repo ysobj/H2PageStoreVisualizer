@@ -58,7 +58,7 @@ public class H2PageStoreVisualizer extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
     }
-    
+
     public int readInt(byte[] buff, int pos) {
         //org.h2.store.Data#readInt()
         int x = (buff[pos] << 24)
@@ -109,13 +109,13 @@ public class H2PageStoreVisualizer extends Application {
                 byte[] page = Arrays.copyOfRange(datafile, pageSize * cnt, pageSize * (cnt + 1));
                 H2Page h2page = H2PageFactory.create(page);
                 rect = createOtherPage(root, styleClass, h2page);
-                
+
         }
         return rect;
     }
 
     protected Rectangle createStaticPage(Group root, String desc) {
-        Rectangle rect = createPage(root);
+        Rectangle rect = createPage(root, true);
         rect.getStyleClass().add("static-page");
         Tooltip t = new Tooltip(desc);
         Tooltip.install(rect, t);
@@ -123,7 +123,7 @@ public class H2PageStoreVisualizer extends Application {
     }
 
     protected Rectangle createOtherPage(Group root, String styleClass, H2Page h2page) {
-        Rectangle rect = createPage(root);
+        Rectangle rect = createPage(root, false);
         String desc = h2page.getPageTypeDesc();
         Tooltip t = new Tooltip(desc);
         rect.getStyleClass().add(styleClass);
@@ -131,17 +131,27 @@ public class H2PageStoreVisualizer extends Application {
         return rect;
     }
 
-    protected Rectangle createPage(Group root) {
+    protected Rectangle createPage(Group root, final boolean isStaticPage) {
         Rectangle rect = new Rectangle(30, 30);
         rect.addEventHandler(MouseEvent.MOUSE_ENTERED, (MouseEvent event) -> {
             System.out.println("MOUSE_ENTERED");
-            rect.getStyleClass().remove("other-page");
-            rect.getStyleClass().add("other-page-selected");
+            if (isStaticPage) {
+                rect.getStyleClass().remove("static-page");
+                rect.getStyleClass().add("static-page-selected");
+            } else {
+                rect.getStyleClass().remove("other-page");
+                rect.getStyleClass().add("other-page-selected");
+            }
         });
         rect.addEventHandler(MouseEvent.MOUSE_EXITED, (MouseEvent event) -> {
             System.out.println("MOUSE_EXITED");
-            rect.getStyleClass().remove("other-page-selected");
-            rect.getStyleClass().add("other-page");
+            if (isStaticPage) {
+                rect.getStyleClass().remove("static-page-selected");
+                rect.getStyleClass().add("static-page");
+            } else {
+                rect.getStyleClass().remove("other-page-selected");
+                rect.getStyleClass().add("other-page");
+            }
         });
         rect.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent event) -> {
             ParallelTransition transition = new ParallelTransition();
