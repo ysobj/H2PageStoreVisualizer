@@ -15,6 +15,8 @@ public class H2PageFactory {
         H2Page h2page;
         if ((data[0] & ~16) == 1) {
             h2page = new H2PageDataLeaf(data);
+        } else if ((data[0] & ~16) == 2) {
+            h2page = new H2PageDataNode(data);
         } else if ((data[0] & ~16) == 4) {
             h2page = new H2PageBtreeLeaf(data);
         } else {

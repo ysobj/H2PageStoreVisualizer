@@ -11,26 +11,26 @@ import java.util.Map;
  *
  * @author ysobj
  */
-public class H2PageDataLeaf extends H2Page {
+public class H2PageDataNode extends H2Page {
 
-    protected int columnCount;
-    protected int tableId;
+    protected int rowCount;
+    protected int indexId;
 
-    public H2PageDataLeaf(byte[] data) {
+    public H2PageDataNode(byte[] data) {
         super(data);
         this.h2data.readShortInt();
         this.parentPageId = this.h2data.readInt();
-        this.tableId = this.h2data.readVarInt();
-        this.columnCount = this.h2data.readVarInt();
+        this.indexId = this.h2data.readVarInt();
+        this.rowCount = this.h2data.readVarInt();
         this.entryCount = this.h2data.readShortInt();
     }
 
-    public int getColumnCount() {
-        return columnCount;
+    public int getRowCount() {
+        return rowCount;
     }
 
-    public int getTableId() {
-        return tableId;
+    public int getIndexId() {
+        return indexId;
     }
 
     public H2Data getH2data() {
@@ -51,6 +51,6 @@ public class H2PageDataLeaf extends H2Page {
 
     @Override
     public String getPageTypeDesc() {
-        return super.getPageTypeDesc() + String.format(" tableId=%d columnCount=%d entryCount=%d", this.getTableId(), this.getColumnCount(), this.getEntryCount());
+        return super.getPageTypeDesc() + String.format(" indexId=%d rowCount=%d entryCount=%d", this.getIndexId(), this.getRowCount(), this.getEntryCount());
     }
 }
