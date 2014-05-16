@@ -16,8 +16,8 @@ public class H2PageDataLeaf extends H2Page {
     protected int columnCount;
     protected int tableId;
 
-    public H2PageDataLeaf(byte[] data) {
-        super(data);
+    public H2PageDataLeaf(int pageId, byte[] data) {
+        super(pageId,data);
         this.h2data.readShortInt();
         this.parentPageId = this.h2data.readInt();
         this.tableId = this.h2data.readVarInt();
@@ -51,6 +51,6 @@ public class H2PageDataLeaf extends H2Page {
 
     @Override
     public String getPageTypeDesc() {
-        return super.getPageTypeDesc() + String.format(" tableId=%d columnCount=%d entryCount=%d", this.getTableId(), this.getColumnCount(), this.getEntryCount());
+        return super.getPageTypeDesc() + String.format(" tableId=%d columnCount=%d entryCount=%d parentPageId=%d", this.getTableId(), this.getColumnCount(), this.getEntryCount(), this.getParentPageId());
     }
 }

@@ -14,8 +14,8 @@ import java.util.Map;
  */
 public class H2PageBtreeLeaf extends H2Page {
     protected int indexId;
-    public H2PageBtreeLeaf(byte[] data) {
-        super(data);
+    public H2PageBtreeLeaf(int pageId,byte[] data) {
+        super(pageId,data);
         this.h2data.readShortInt();
         this.parentPageId = this.h2data.readInt();
         this.indexId = this.h2data.readVarInt();

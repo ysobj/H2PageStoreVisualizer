@@ -5,6 +5,7 @@
  */
 package h2pagestorevisualizer.page;
 
+import java.util.Arrays;
 import java.util.Map;
 
 /**
@@ -15,14 +16,24 @@ public class H2PageDataNode extends H2Page {
 
     protected int rowCount;
     protected int indexId;
+    protected int rightMostChildId;
+    protected long[] keys;
+    protected int[] childPageIds;
 
-    public H2PageDataNode(byte[] data) {
-        super(data);
+    public H2PageDataNode(int pageId,byte[] data) {
+        super(pageId, data);
         this.h2data.readShortInt();
         this.parentPageId = this.h2data.readInt();
         this.indexId = this.h2data.readVarInt();
         this.rowCount = this.h2data.readVarInt();
         this.entryCount = this.h2data.readShortInt();
+        this.rightMostChildId = this.h2data.readInt();
+        this.keys = new long[entryCount];
+        this.childPageIds = new int[entryCount];
+        for (int i = 0; i < this.entryCount; i++) {
+            this.childPageIds[i] = this.h2data.readInt();
+            this.keys[i] = this.h2data.readVarLong();
+        }
     }
 
     public int getRowCount() {
@@ -49,8 +60,12 @@ public class H2PageDataNode extends H2Page {
         return entryCount;
     }
 
+    public int getRightMostChildId() {
+        return rightMostChildId;
+    }
+
     @Override
     public String getPageTypeDesc() {
-        return super.getPageTypeDesc() + String.format(" indexId=%d rowCount=%d entryCount=%d", this.getIndexId(), this.getRowCount(), this.getEntryCount());
+        return super.getPageTypeDesc() + String.format(" parentPageId=%d indexId=%d countOfAllChildren=%d entryCount=%d rightmostChildPageId=%d keys=%s childPageIds=%s", this.getParentPageId(), this.getIndexId(), this.getRowCount(), this.getEntryCount(), this.getRightMostChildId(), Arrays.toString(this.keys), Arrays.toString(this.childPageIds));
     }
 }

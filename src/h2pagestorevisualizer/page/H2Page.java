@@ -13,7 +13,7 @@ import java.util.Map;
  * @author ysobj
  */
 public class H2Page {
-
+    protected int pageId;
     protected final H2Data h2data;
     protected final byte[] rawdata;
     protected final int pageType;
@@ -34,7 +34,8 @@ public class H2Page {
         typeMap.put(8, "TYPE_STREAM_DATA"); //A stream data page.
     }
 
-    public H2Page(byte[] data) {
+    public H2Page(int pageId, byte[] data) {
+        this.pageId = pageId;
         this.rawdata = data;
         this.h2data = new H2Data(data);
         this.pageType = h2data.readByte() & ~16;
@@ -49,7 +50,6 @@ public class H2Page {
     }
 
     public String getPageTypeDesc() {
-        return typeMap.get(pageType);
+        return String.format("%3d:%s",this.pageId,typeMap.get(pageType));
     }
-
 }

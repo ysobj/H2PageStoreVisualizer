@@ -107,7 +107,7 @@ public class H2PageStoreVisualizer extends Application {
                     styleClass = "static-page";
                 }
                 byte[] page = Arrays.copyOfRange(datafile, pageSize * cnt, pageSize * (cnt + 1));
-                H2Page h2page = H2PageFactory.create(page);
+                H2Page h2page = H2PageFactory.create(cnt,page);
                 System.out.println(h2page.getPageTypeDesc());
                 rect = createOtherPage(root, styleClass, h2page);
 

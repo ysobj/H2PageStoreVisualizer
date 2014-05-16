@@ -11,16 +11,16 @@ package h2pagestorevisualizer.page;
  */
 public class H2PageFactory {
 
-    public static H2Page create(byte[] data) {
+    public static H2Page create(int pageId, byte[] data) {
         H2Page h2page;
         if ((data[0] & ~16) == 1) {
-            h2page = new H2PageDataLeaf(data);
+            h2page = new H2PageDataLeaf(pageId,data);
         } else if ((data[0] & ~16) == 2) {
-            h2page = new H2PageDataNode(data);
+            h2page = new H2PageDataNode(pageId,data);
         } else if ((data[0] & ~16) == 4) {
-            h2page = new H2PageBtreeLeaf(data);
+            h2page = new H2PageBtreeLeaf(pageId,data);
         } else {
-            h2page = new H2Page(data);
+            h2page = new H2Page(pageId,data);
         }
         return h2page;
     }
