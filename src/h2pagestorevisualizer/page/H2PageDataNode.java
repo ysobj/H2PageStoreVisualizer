@@ -16,7 +16,6 @@ public class H2PageDataNode extends H2Page {
 
     protected int rowCount;
     protected int indexId;
-    protected int rightMostChildId;
     protected long[] keys;
     protected int[] childPageIds;
 
@@ -25,11 +24,11 @@ public class H2PageDataNode extends H2Page {
         this.h2data.readShortInt();
         this.parentPageId = this.h2data.readInt();
         this.indexId = this.h2data.readVarInt();
-        this.rowCount = this.h2data.readVarInt();
+        this.rowCount = this.h2data.readInt();
         this.entryCount = this.h2data.readShortInt();
-        this.rightMostChildId = this.h2data.readInt();
         this.keys = new long[entryCount];
-        this.childPageIds = new int[entryCount];
+        this.childPageIds = new int[entryCount+1];
+        childPageIds[entryCount] = this.h2data.readInt();
         for (int i = 0; i < this.entryCount; i++) {
             this.childPageIds[i] = this.h2data.readInt();
             this.keys[i] = this.h2data.readVarLong();
@@ -60,12 +59,8 @@ public class H2PageDataNode extends H2Page {
         return entryCount;
     }
 
-    public int getRightMostChildId() {
-        return rightMostChildId;
-    }
-
     @Override
     public String getPageTypeDesc() {
-        return super.getPageTypeDesc() + String.format(" parentPageId=%d indexId=%d countOfAllChildren=%d entryCount=%d rightmostChildPageId=%d keys=%s childPageIds=%s", this.getParentPageId(), this.getIndexId(), this.getRowCount(), this.getEntryCount(), this.getRightMostChildId(), Arrays.toString(this.keys), Arrays.toString(this.childPageIds));
+        return super.getPageTypeDesc() + String.format(" parentPageId=%d indexId=%d countOfAllChildren=%d entryCount=%d keys=%s childPageIds=%s", this.getParentPageId(), this.getIndexId(), this.getRowCount(), this.getEntryCount(), Arrays.toString(this.keys), Arrays.toString(this.childPageIds));
     }
 }
