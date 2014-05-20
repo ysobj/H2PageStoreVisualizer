@@ -36,7 +36,7 @@ public class H2PageStoreVisualizer extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        byte[] datafile = getDatafile("/sample3.h2.db");
+        byte[] datafile = getDatafile("/sample.h2.db");
         int pageSize = readInt(datafile, 48);
         System.out.println(String.format("pageSize: %d ", pageSize));
         int pages = (int) datafile.length / pageSize;
