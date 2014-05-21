@@ -42,7 +42,7 @@ public class H2PageStoreVisualizer extends Application {
         int pages = (int) datafile.length / pageSize;
         int cnt = 0;
         Group root = new Group();
-        for (int i = 0; i < 15; i++) {
+        for (int i = 0; cnt < pages; i++) {
             for (int j = 0; j < 10; j++) {
                 if (cnt < pages) {
                     Rectangle rect = createRectangle(cnt, root, datafile, pageSize);
